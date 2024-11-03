@@ -15,14 +15,15 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
-        uses: actions/checkout@v2           # Клонирует репозиторий
+        uses: actions/checkout@v2
       - name: Set up Python environment
         run: |
           sudo apt-get update
-          sudo apt-get install -y python3-pytest
+          sudo apt-get install -y python3 python3-pip  # Устанавливаем Python и pip, если они не установлены
+          pip3 install pytest                          # Устанавливаем pytest через pip
       - name: Run tests
         run: |
-          pytest test.py                    # Запуск тестов с помощью pytest
+          pytest test.py 
 
   # Задача деплоя
   deploy-job:
