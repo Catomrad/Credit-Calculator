@@ -1,25 +1,40 @@
-stages:
-  - test
-  - deploy
+name: CI/CD Pipeline
 
-test-job:
-  stage: test
-  before_script:
-    - apt-get update
-    - apt-get install sudo
-    - sudo apt-get --yes install python-pytest
-  script:
-    - pytest test.py
+# Определение событий, запускающих workflow
+on:
+  push:
+    branches:
+      - main            # Запускать при push в ветку main
+  pull_request:
+    branches:
+      - main            # Запускать при открытии pull request в ветку main
 
-deploy-job:
-  stage: deploy
-  before_script:
-    - apt-get update
-    - apt-get install sudo
-    - sudo apt-get --yes install rsync
-    - sudo mkdir -p /var/www/project
-  script:
-    - echo "Deploing aplication..."
-    - pwd
-    - rsync -av --no-perms --no-owner --no-group --exclude ".git" $CI_PROJECT_DIR/ /var/www/project
-    - echo "Succesully deployed"
+jobs:
+  # Задача тестирования
+  test-job:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2           # Клонирует репозиторий
+      - name: Set up Python environment
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y python3-pytest
+      - name: Run tests
+        run: |
+          pytest test.py                    # Запуск тестов с помощью pytest
+
+  # Задача деплоя
+  deploy-job:
+    runs-on: ubuntu-latest
+    needs: test-job                         # Указывает, что эта задача запускается после успешного выполнения test-job
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+      - name: Deploy application
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y rsync
+          sudo mkdir -p /var/www/project
+          sudo rsync -av --no-perms --no-owner --no-group --exclude ".git" ./ /var/www/project
+          echo "Successfully deployed"
