@@ -8,8 +8,8 @@ test-job:
     - apt-get update
     - apt-get install sudo
     - sudo apt-get --yes install python-pytest
-script:
-  - pytest test.py
+  script:
+    - pytest test.py
 
 deploy-job:
   stage: deploy
@@ -18,8 +18,8 @@ deploy-job:
     - apt-get install sudo
     - sudo apt-get --yes install rsync
     - sudo mkdir -p /var/www/project
-script:
-  - echo "Deploing aplication..."
-  - pwd
-  - rsync -av --no-perms --no-owner --no-group --exclude ".git" $CI_PROJECT_DIR/ /var/www/project
-  - echo "Succesully deployed"
+  script:
+    - echo "Deploing aplication..."
+    - pwd
+    - rsync -av --no-perms --no-owner --no-group --exclude ".git" $CI_PROJECT_DIR/ /var/www/project
+    - echo "Succesully deployed"
