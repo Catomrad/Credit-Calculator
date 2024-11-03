@@ -1,5 +1,4 @@
 # Калькулятор ипотеки
-from tkinter import *
 
 
 class CreditCalculator:
